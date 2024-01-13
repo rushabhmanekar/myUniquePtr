@@ -19,3 +19,33 @@ void DataModeller::operator()()
 
     std::cout<<"\nAverage value is : "<<total/_goodsPrices.size();
 }
+
+
+/*
+    Buffer 
+[            ]
+
+word - _instance
+variant visit - Rushabh 0 780000.0f
+word - _goodsPrice
+for loop - vector {  , , ,  }
+
+
+os is a buffer which stores the output to be shown on console
+*/
+
+
+std::ostream &operator<<(std::ostream &os, const DataModeller &rhs) {
+    
+    os << "_instances: ";
+
+    std::visit([&](auto&& val){os<<*val;},rhs._instances);
+
+    os<< " _goodsPrices: ";
+
+    for(float val : rhs._goodsPrices){
+        os<<val<<"\t";
+    }
+
+    return os;
+}

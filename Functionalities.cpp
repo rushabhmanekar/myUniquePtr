@@ -8,6 +8,10 @@
     
 // }
 
+#include<mutex>
+
+std::mutex mt; //in this case koi bhi lock chalega (figureout why?)
+
 void CreateObjects(Container &data)
 {
     data.emplace_back(
@@ -59,21 +63,27 @@ void CalculateTaxPayable(const Container &data)
 
         if(std::holds_alternative<BusinessPointer>(val)){
             const BusinessPointer& p = std::get<BusinessPointer> (val);
-            std::cout<<"Business Tax : "<<0.1f*(p->revenue()-p->expense());
+            std::lock_guard<std::mutex> lk(mt);
+            std::cout<<"\nBusiness Tax : "<<0.1f*(p->revenue()-p->expense());
         }else{
-            const EmpPointer& p = std::get<EmpPointer> (val);
-            if(p->type()==EmployeeType::REGULAR){
-                std::cout<<"Tax is 10% : "<<0.1f * p->salary()<<"\n";
+            
+            // const EmpPointer& p = std::get<EmpPointer> (val);
+
+            if(const EmpPointer& p = std::get<EmpPointer> (val); p->type()==EmployeeType::REGULAR){   //special syntax
+
+                std::lock_guard<std::mutex> lk(mt);
+                std::cout<<"\nTax is 10% : "<<0.1f * p->salary();
+
             }else{
-                std::cout<<"Tax is 20% : "<<0.2f * p->salary()<<"\n";
+
+                std::lock_guard<std::mutex> lk(mt);
+                std::cout<<"\nTax is 20% : "<<0.2f * p->salary();
+
             }
         }
     }
 }
 
-/*
-
-*/
 
 void CallParanOperator(const Container &data)
 {
@@ -82,6 +92,7 @@ void CallParanOperator(const Container &data)
 
     }else{
         for(const dataPointer& ptr : data){
+            std::lock_guard<std::mutex> lk(mt);
             ptr->operator()();
         }
     }

@@ -6,6 +6,7 @@
 #include<variant>
 #include<vector>
 #include<memory>
+#include <ostream>
 
 using BusinessPointer = std::unique_ptr<BusinessOwner>; //disables copy logic
 using EmpPointer =std::unique_ptr<Employee>;
@@ -36,6 +37,8 @@ public:
     const VType& instances() const { return _instances; }     //
 
     std::vector<float> goodsPrices() const { return _goodsPrices; }
+
+    friend std::ostream &operator<<(std::ostream &os, const DataModeller &rhs);
 };
 
 
